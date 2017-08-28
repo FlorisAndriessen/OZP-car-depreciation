@@ -1,0 +1,197 @@
+# In Excel : Add header,  remove '$', 
+
+
+#Read File
+tabel <- read.csv('ScrapedcarsFinal.csv')
+
+#Remove all rows with NA , this removes all faulty rows
+tabel <- na.omit(tabel)
+
+#Set to numeric
+tabel$Price <- as.numeric(levels(tabel$Price))[tabel$Price]
+tabel$Mileage <- as.numeric(levels(tabel$Mileage))[tabel$Mileage]
+
+#Set prices at 0 to NA since they are unvalid
+tabel$Price[tabel$Price==0] <- NA
+
+#Remove all rows with NA , this removes all faulty rows
+tabel <- na.omit(tabel)
+
+x <- (!is.na(sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 6)))
+y <- (!is.na(sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 7)))
+ 
+#Split column with multiple values into multiple columns
+tabel$Certified <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 1)
+tabel$Year <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 2)
+tabel$Brand <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 3)
+tabel$ModelNew <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 4)
+tabel$Edition <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 5)
+
+
+tabel$Edition1 <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 5)
+tabel$Edition2 <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 6)
+tabel$Edition3 <- sapply(strsplit(as.character(tabel$Model),'\\s+'), "[", 7)
+tabel$Edition <- ifelse(y, tabel$Edition <- paste(tabel$Edition1, tabel$Edition2, tabel$Edition3), ifelse(x, tabel$Edition <- paste(tabel$Edition1, tabel$Edition2), tabel$Edition1))
+tabel$Model <- tabel$ModelNew
+tabel$ModelNew <- NULL
+tabel$Edition1 <- NULL
+tabel$Edition2 <- NULL
+tabel$Edition3 <- NULL
+
+#Limit the number of different Colors
+#Set the Color column type to character
+tabel$Color <- as.character(as.factor(tabel$Color))
+tabel$Interior.Color <- as.character(as.factor(tabel$Interior.Color))
+tabel$Transmission <- as.character(as.factor(tabel$Transmission))
+
+#Set to undercase
+tabel$Color <- tolower(tabel$Color)
+tabel$Interior.Color <- tolower(tabel$Interior.Color)
+tabel$Fueltype <- tolower(tabel$Fueltype)
+tabel$Transmission <- tolower(tabel$Transmission)
+
+# Look for Colors in variables, change value to the Color present in the variables
+tabel$Color[grep("red", tabel$Color)] <- "red"
+tabel$Color[grep("blue", tabel$Color)] <- "blue"
+tabel$Color[grep("green", tabel$Color)] <- "green"
+tabel$Color[grep("black", tabel$Color)] <- "black"
+tabel$Color[grep("white", tabel$Color)] <- "white"
+tabel$Color[grep("gray", tabel$Color)] <- "gray"
+tabel$Color[grep("silver", tabel$Color)] <- "silver"
+tabel$Color[grep("yellow", tabel$Color)] <- "yellow"
+tabel$Color[grep("orange", tabel$Color)] <- "orange"
+tabel$Color[grep("violet", tabel$Color)] <- "violet"
+tabel$Color[grep("purple", tabel$Color)] <- "purple"
+tabel$Color[grep("brown", tabel$Color)] <- "brown"
+tabel$Color[grep("beige", tabel$Color)] <- "beige"
+
+
+#same for Interior Color
+tabel$Interior.Color[grep("red", tabel$Interior.Color)] <- "red"
+tabel$Interior.Color[grep("blue", tabel$Interior.Color)] <- "blue"
+tabel$Interior.Color[grep("green", tabel$Interior.Color)] <- "green"
+tabel$Interior.Color[grep("black", tabel$Interior.Color)] <- "black"
+tabel$Interior.Color[grep("white", tabel$Interior.Color)] <- "white"
+tabel$Interior.Color[grep("gray", tabel$Interior.Color)] <- "gray"
+tabel$Interior.Color[grep("silver", tabel$Interior.Color)] <- "silver"
+tabel$Interior.Color[grep("yellow", tabel$Interior.Color)] <- "yellow"
+tabel$Interior.Color[grep("orange", tabel$Interior.Color)] <- "orange"
+tabel$Interior.Color[grep("violet", tabel$Interior.Color)] <- "violet"
+tabel$Interior.Color[grep("purple", tabel$Interior.Color)] <- "purple"
+tabel$Interior.Color[grep("brown", tabel$Interior.Color)] <- "brown"
+tabel$Interior.Color[grep("beige", tabel$Interior.Color)] <- "beige"
+
+
+
+#Change other colors to unknown
+tabel$Color[(tabel$Color != "red" & tabel$Color != "blue" & tabel$Color != "green" & tabel$Color != "black" & tabel$Color != "white" 
+& tabel$Color != "gray" & tabel$Color != "silver"	& tabel$Color != "yellow" & tabel$Color != "orange" & tabel$Color != "violet"	
+& tabel$Color != "purple" & tabel$Color != "brown"	& tabel$Color != "beige")] <- "Unknown"
+
+tabel$Interior.Color[(tabel$Interior.Color != "red" & tabel$Interior.Color != "blue" & tabel$Interior.Color != "green" & tabel$Interior.Color != "black" & tabel$Interior.Color != "white" 
+& tabel$Interior.Color != "gray" & tabel$Interior.Color != "silver"	& tabel$Interior.Color != "yellow" & tabel$Interior.Color != "orange" & tabel$Interior.Color != "violet"	
+& tabel$Interior.Color != "purple" & tabel$Interior.Color != "brown"	& tabel$Interior.Color != "beige")] <- "Unknown"
+
+
+# Look for keywords in variables, change value to the keywords present in the variables
+tabel$Fueltype[grep("hybrid", tabel$Fueltype)] <- "hybrid"
+tabel$Fueltype[grep("gasoline", tabel$Fueltype)] <- "gasoline"
+tabel$Fueltype[grep("diesel", tabel$Fueltype)] <- "diesel"
+tabel$Fueltype[grep("electric", tabel$Fueltype)] <- "electric"
+tabel$Fueltype[(tabel$Fueltype != "hybrid" & tabel$Fueltype != "gasoline" & tabel$Fueltype != "diesel" & tabel$Fueltype != "electric")] <- "Unknown"
+
+#same for Transmission
+tabel$Transmission[grep("automatic", tabel$Transmission)] <- "automatic"
+tabel$Transmission[grep("manual", tabel$Transmission)] <- "manual"
+tabel$Transmission[(tabel$Transmission != "automatic" & tabel$Transmission != "automatic")] <- "Unknown"
+
+#Create new column with the cars age, an age of 0 years old is rounded up to 1 year old
+tabel$Year <- as.numeric(as.character(tabel$Year))
+tabel$Age <- 2017-tabel$Year
+M <- nrow(tabel)
+for (i in 1:M){if (is.na(tabel$Age[i])==F & tabel$Age[i]==0) {tabel$Age[i] <- 1}}
+
+#Remove all rows with NA , this removes all faulty rows
+tabel <- na.omit(tabel)
+
+
+###														 ###
+###Code for cleaning the second table with the New prices###
+###						 								 ###
+
+#Read the fille
+tabel2 <- read.csv('ScrapedPricesFinal.csv', na.strings=c("","NA"))
+
+##Remove all rows with NA , this removes all faulty rows
+tabel2 <- na.omit(tabel2)
+
+#Split column with multiple values into multiple columns
+
+tabel2$Year <- sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 1)
+tabel2$Brand <- sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 2)
+tabel2$Model1 <- sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 3)
+tabel2$Model2 <- sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 4)
+tabel2$Model3 <- sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 5) 
+x2 <- (!is.na(sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 4)))
+y2 <- (!is.na(sapply(strsplit(as.character(tabel2$YBM),'\\s+'), "[", 5)))
+tabel2$Model <- ifelse(y2, tabel2$Model <- paste(tabel2$Model1, tabel2$Model2, tabel2$Model3), ifelse(x2, tabel2$Model <- paste(tabel2$Model1, tabel2$Model2), tabel2$Model1))
+
+tabel2$Edition <- as.character(as.factor(tabel2$Edition))
+
+tabel2$Model1 <- NULL
+tabel2$Model2 <- NULL
+tabel2$Model3 <- NULL
+tabel2$YBM <- NULL
+tabel2$NewPrice <- as.numeric(levels(tabel2$NewPrice))[tabel2$NewPrice]
+
+
+#match for other variables, pick closest Levenshtein distance, this will make sure the models in table 1 are equal to table 2
+install.packages(RecordLinkage)
+library(RecordLinkage)
+M <- nrow(tabel)
+check <- c(1,2)
+checkv0 <- c(1,2)
+tabel$NewPrice <- 1
+
+
+for (i in 1:M)
+{	
+	checkv0 <- tabel2$Model[tabel2$Brand==tabel$Brand[i] & tabel2$Year==tabel$Year[i]]
+	
+    H <- order(	levenshteinDist(tabel$Model[i], checkv0),decreasing=F)[1]
+               tabel$Model2[i] <- checkv0[H]                             
+}
+
+#match for other variables, pick closest Levenshtein distance, this will make sure the editions in table 1 are equal to table 2
+
+
+for (i in 1:M)
+{	
+	checkv0 <- tabel2$Edition[tabel2$Brand==tabel$Brand[i] & tabel2$Year==tabel$Year[i] & tabel2$Model==tabel$Model2[i]]
+	
+    H <- order(	levenshteinDist(tabel$Edition[i], checkv0),decreasing=F)[1]
+               tabel$Edition2[i] <- checkv0[H]                             
+}
+
+#Remove all rows with NA , this removes all faulty rows
+tabel <- na.omit(tabel)
+
+#Add the prices of table 2 to table 1, based on the previously matched models
+
+for (i in 1:M)
+{
+tabel$NewPrice[i] <- tabel2$NewPrice[tabel2$Brand==tabel$Brand[i] & tabel2$Year==tabel$Year[i] & tabel2$Model==tabel$Model2[i] & tabel2$Edition==tabel$Edition2[i]]
+}
+
+#Remove all rows with NA , this removes all faulty rows
+tabel <- na.omit(tabel)
+
+#Calcualte depreciation
+tabel$Depreciation <- tabel$NewPrice-tabel$Price
+
+#Calcualte depreciation per year, both nominal and relative
+tabel$DepreciationPerYear <- tabel$Depreciation/tabel$Age
+tabel$RDPY <-tabel$DepreciationPerYear/tabel$NewPrice*100
+
+
+
