@@ -1,0 +1,4 @@
+Carsscrapen15_07 is the web scraper for the used cars.
+Pricescrapen is the web scraper for the orginal prices. 
+The two CSV-files are the output of the scrapers with added header and special signs removed. 
+Server.R and UI.R form the Shiny app. 
